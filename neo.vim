@@ -36,10 +36,10 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'kien/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-signify'
+Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-unimpaired'
 
-"Plug 'tpope/vim-unimpaired'
 "Plug 'airblade/vim-gitgutter'
-"Plug 'scrooloose/nerdtree'
 "Plug 'Valloric/YouCompleteMe'
 "Plugin 'posva/vim-vue'
 "Plugin 'ternjs/tern_for_vim'
@@ -51,9 +51,12 @@ Plug 'mhinz/vim-signify'
 call plug#end()
 
 "NERDTree
-"map <silent> <C-n> :NERDTreeToggle<CR>
-"autocmd StdinReadPre * let s:std_in=1
-"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+map <silent> <C-n> :NERDTreeToggle<CR>
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+"CtrlP
+let g:ctrlp_custom_ignore = 'node_modules\|git'
 
 "Color Scheme
 "if strftime('%H') >= 7 && strftime('%H') < 19
@@ -78,8 +81,8 @@ let g:signify_vcs_list = [ 'git' ]
 let g:signify_realtime = 1
 
 "Mapping
-nmap     <C-J>     ]e
 nmap     <C-K>     [e
+nmap     <C-J>     ]e
 
 nnoremap <C-t>     :tabnew<CR>
 inoremap <C-t>     <Esc>:tabnew<CR>
