@@ -31,14 +31,16 @@ Plug 'drewtempelmeyer/palenight.vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'ervandew/supertab'
 Plug 'VundleVim/Vundle.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'kien/ctrlp.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-signify'
 Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-unimpaired'
+Plug 'itchyny/lightline.vim'
+Plug 'mengelbrecht/lightline-bufferline'
 
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
 "Plug 'airblade/vim-gitgutter'
 "Plug 'Valloric/YouCompleteMe'
 "Plugin 'posva/vim-vue'
@@ -64,16 +66,49 @@ let g:ctrlp_custom_ignore = 'node_modules\|git'
 "  let g:airline_theme='cosmic_latte_light'
 "else
   set background=dark
-  let g:airline_theme='cosmic_latte_dark'
+"  let g:airline_theme='cosmic_latte_dark'
 "endif
 colorscheme cosmic_latte
 
 "Airline
-let g:airline_powerline_fonts = 1 
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#branch#enabled = 1
-let g:airline#extensions#tabline#fnamemod = ':t'
+"let g:airline_powerline_fonts = 1 
+"let g:airline#extensions#tabline#enabled = 1
+"let g:airline#extensions#branch#enabled = 1
+"let g:airline#extensions#tabline#fnamemod = ':t'
 ":let g:airline_theme='murmur'
+
+"Light Line
+set showtabline=2
+set guioptions-=e
+let g:lightline = {
+  \ 'colorscheme': 'cosmic_latte_dark',
+  \ 'active': {
+  \   'left': [ [ 'mode', 'paste' ], [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+  \ },
+  \ 'component_function': {
+  \   'gitbranch': 'fugitive#head',
+  \ },
+  \ 'component_expand': {
+  \   'buffers': 'lightline#bufferline#buffers',
+  \ },
+  \ 'component_type': {
+  \   'buffers': 'tabsel',
+  \   'kanan': 'ccc',
+  \ },
+  \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
+  \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" },
+  \ 'tabline': {
+  \   'left': [ [ 'buffers' ] ],
+  \   'right': [ [ 'kanan' ] ],
+  \ },
+  \ }
+"let g:lightline#bufferline#unnamed = "[NO NAME]"
+"let g:lightline#bufferline#filename_modifier= ":."
+"let g:lightline#bufferline#more_buffers = "..."
+"let g:lightline#bufferline#modified = " +"
+"let g:lightline#bufferline#read_only = " -"
+"let g:lightline#bufferline#shorten_path = 1
+"let g:lightline#bufferline#show_number = 0
 
 "Signify
 let g:signify_disable_by_default=0
