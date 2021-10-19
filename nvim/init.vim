@@ -15,6 +15,7 @@ set smartindent
 set incsearch
 set list
 set listchars=tab:▸\ ,trail:. ",eol:¬
+
 "set mouse=a
 set scrolloff=5
 set laststatus=2
@@ -32,17 +33,20 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-signify'
-Plug 'scrooloose/nerdtree'
+Plug 'preservim/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'itchyny/lightline.vim'
 Plug 'mengelbrecht/lightline-bufferline'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'mattn/emmet-vim'
-"Plug 'maksimr/vim-jsbeautify'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'hrsh7th/nvim-compe'
+Plug 'tzachar/compe-tabnine', { 'do': './install.sh' }
 
-"Plug 'Valloric/YouCompleteMe'
+"Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"Plug 'maksimr/vim-jsbeautify'
 "Plug 'mhartington/oceanic-next'
 "Plug 'drewtempelmeyer/palenight.vim'
 "Plug 'flazz/vim-colorschemes'
@@ -64,6 +68,7 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 call plug#end()
 
+let g:deoplete#enable_at_startup = 1
 let g:webdevicons_enable = 1
 let g:webdevicons_enable_nerdtree = 1
 
@@ -121,16 +126,18 @@ let g:lightline = {
   \   'right': [ [ 'kanan' ] ],
   \ },
   \ 'separator': {
-  \   'left': "\ue0b8 ",
-  \   'right': "\ue0ba ",
+  \   'left': "",
+  \   'right': "",
   \ },
   \ 'subseparator': {
-  \   'left': "\ue0b9 ",
-  \   'right': '\ue0bb ',
+  \   'left': "",
+  \   'right': "",
   \ },
 \ }
   " 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
   " 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" },
+  " 'separator': {'left': "\ue0b8 ",'right': "\ue0ba ",},
+  " 'subseparator': { 'left': "\ue0b9 ", 'right': '\ue0bb ', },
 "let g:lightline#bufferline#unnamed = "[NO NAME]"
 "let g:lightline#bufferline#filename_modifier= ":."
 "let g:lightline#bufferline#more_buffers = "..."
@@ -140,7 +147,7 @@ let g:lightline = {
 "let g:lightline#bufferline#show_number = 0
 
 "fzf
-"let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'
+let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden'
 
 "Signify
 let g:signify_disable_by_default=0
@@ -155,6 +162,30 @@ au FileType go nmap <leader>r <Plug>(go-run)
 
 "Python
 let g:python_highlight_all = 1
+
+"Compe
+let g:compe = {}
+let g:compe.enabled = v:true
+let g:compe.autocomplete = v:true
+let g:compe.debug = v:false
+let g:compe.min_length = 1
+let g:compe.preselect = 'enable'
+let g:compe.throttle_time = 80
+let g:compe.source_timeout = 200
+let g:compe.incomplete_delay = 400
+let g:compe.max_abbr_width = 100
+let g:compe.max_kind_width = 100
+let g:compe.max_menu_width = 100
+let g:compe.documentation = v:true
+
+let g:compe.source = {}
+let g:compe.source.path = v:true
+let g:compe.source.buffer = v:true
+let g:compe.source.calc = v:true
+let g:compe.source.nvim_lua = v:true
+let g:compe.source.ultisnips = v:false
+let g:compe.source.tabnine = v:true
+
 
 "Mapping
 nmap     <C-K>     [e
@@ -180,5 +211,11 @@ inoremap <C-Z>     <C-O>:undo<CR>
 
 nmap <silent> <C-p> :call fzf#run(fzf#wrap({'source': 'fd --type f'}))<CR>
 
-source $HOME/.config/nvim/coc.vim
+imap <expr> <C-Space> compe#complete()
+inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
+inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
+
+"source $HOME/.config/nvim/coc.vim
 
