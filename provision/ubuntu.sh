@@ -16,3 +16,8 @@ omf install https://github.com/jhillyerd/plugin-git
 curl -sS https://starship.rs/install.sh | sh
 echo 'starship init fish | source' >> ~/.config/fish/config.fish
 echo '[fish] configured successfully'
+
+# ssh
+# ssh-keygen -t ed25519 -C "your_email" -P "" -f ~/.ssh/id_ed25519
+# eval "$(ssh-agent -s)"
+# ssh-add ~/.ssh/id_ed25519
