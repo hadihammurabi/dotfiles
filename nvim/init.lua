@@ -38,7 +38,7 @@ require("lazy").setup({
       vim.o.timeout = true
       vim.o.timeoutlen = 300
       require("which-key").setup({
-         window = {
+        window = {
           border = "rounded",
           padding = { 2, 2, 2, 2 },
         },
@@ -86,8 +86,8 @@ require("lazy").setup({
     "lukas-reineke/indent-blankline.nvim",
     config = function()
       vim.opt.termguicolors = true
-      vim.cmd [[highlight IndentBlanklineIndent1 guibg=#1f1f1f gui=nocombine]]
-      vim.cmd [[highlight IndentBlanklineIndent2 guibg=#1a1a1a gui=nocombine]]
+      vim.cmd [[highlight IndentBlanklineIndent1 guibg=#1c1c29 gui=nocombine]]
+      vim.cmd [[highlight IndentBlanklineIndent2 guibg=#20202e gui=nocombine]]
       require("indent_blankline").setup({
         char = "",
         char_highlight_list = {
@@ -199,8 +199,13 @@ require("lazy").setup({
   {
     "catppuccin/nvim",
     config = function()
-      require("catppuccin").setup()
-      vim.cmd("colorscheme catppuccin")
+      require("catppuccin").setup({
+        indent_blankline = {
+          enabled = true,
+          colored_indent_levels = true,
+        },
+      })
+      vim.cmd.colorscheme "catppuccin-mocha"
     end,
   },
   { "dstein64/vim-startuptime" },
