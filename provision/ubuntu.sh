@@ -18,6 +18,11 @@ curl -sS https://starship.rs/install.sh | sh
 echo 'starship init fish | source' >> ~/.config/fish/config.fish
 echo '[fish] configured successfully'
 
+# install docker
+curl -fsSL https://get.docker.com | bash
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
 # ssh
 # ssh-keygen -t ed25519 -C "your_email" -P "" -f ~/.ssh/id_ed25519
 # eval "$(ssh-agent -s)"
