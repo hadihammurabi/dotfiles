@@ -19,7 +19,7 @@ vim.opt.expandtab = true
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.list = true
-vim.opt.listchars:append "eol:¬"
+-- vim.opt.listchars:append "eol:¬"
 
 vim.g.mapleader = "\\"
 
@@ -59,6 +59,28 @@ require("lazy").setup({
         },
       })
     end,
+  },
+  { "mfussenegger/nvim-dap" },
+  {
+    "rcarriga/nvim-dap-ui",
+    config = function()
+      require('dapui').setup({})
+    end
+  },
+  {
+    "jay-babu/mason-nvim-dap.nvim",
+    config = function()
+      require("mason-nvim-dap").setup({})
+      require('dap').adapters.go = {
+        type = "server",
+        port = '63370',
+        executable = {
+          command = "dlv",
+          args = { "dap", "-l", "127.0.0.1:63370" },
+        },
+      }
+      vim.cmd 'DapLoadLaunchJSON'
+    end
   },
   {
     "Darazaki/indent-o-matic",
@@ -136,13 +158,15 @@ require("lazy").setup({
       "nvim-lua/plenary.nvim",
     },
     config = function()
-      require("neo-tree").setup()
+      require("neo-tree").setup({
+        close_if_last_window = true,
+      })
     end,
   },
   {
     "nvim-telescope/telescope.nvim",
     config = function()
-      require("telescope").setup()
+      require("telescope").setup({})
     end,
   },
   {
@@ -172,8 +196,15 @@ require("lazy").setup({
         vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
       end
 
-      require("lspconfig")["gopls"].setup({
+      local lsp = require("lspconfig")
+      lsp.gopls.setup({
         on_attach = on_attach,
+      })
+      lsp.rust_analyzer.setup({
+        on_attach = on_attach,
+        cmd = {
+          "rustup", "run", "stable", "rust-analyzer",
+        },
       })
     end,
   },
@@ -212,7 +243,11 @@ require("lazy").setup({
 })
 
 
-vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.formatting_sync()]]
+vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format({ async = true }) ]]
 
 map("n", "<space>", ":WhichKey<CR>", { silent = true })
 map("n", "<C-p>", ":Telescope find_files<CR>", { silent = true })
+map("n", "<C-b>", ":NeoTreeShowToggle<CR>", { silent = true })
+map("n", "<C-B>", ":DapToggleBreakpoint<CR>", { silent = true })
+map("n", "<C-s>", ":w<CR>", { silent = true })
+map("i", "<C-s>", "<esc>:w<CR>", { silent = true })
