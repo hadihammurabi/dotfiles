@@ -19,8 +19,11 @@ vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.list = true
 -- vim.opt.listchars:append "eol:¬"
+vim.opt.termguicolors = true
 
 vim.g.mapleader = ' '
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 function map(mode, lhs, rhs, opts)
     local options = { noremap = true }
@@ -120,15 +123,15 @@ require("lazy").setup({
       local dap, dapui = require("dap"), require("dapui")
       dap.listeners.after.event_initialized["dapui_config"] = function()
         dapui.open()
-        vim.cmd ':NeoTreeClose'
+        vim.cmd 'NvimTreeClose'
       end
       dap.listeners.before.event_terminated["dapui_config"] = function()
         dapui.close()
-        vim.cmd ':NeoTreeShow'
+        vim.cmd 'NvimTreeOpen'
       end
       dap.listeners.before.event_exited["dapui_config"] = function()
         dapui.close()
-        vim.cmd ':NeoTreeShow'
+        vim.cmd 'NvimTreeShow'
       end
 
       vim.cmd 'DapLoadLaunchJSON'
@@ -161,7 +164,13 @@ require("lazy").setup({
   {
     "akinsho/bufferline.nvim",
     config = function()
-      require("bufferline").setup()
+      require("bufferline").setup({
+        options = {
+          offsets = {
+            { filetype = 'NvimTree' },
+          },
+        },
+      })
     end,
   },
   { "MunifTanjim/nui.nvim" },
@@ -223,19 +232,10 @@ require("lazy").setup({
     end,
   },
   {
-    "nvim-neo-tree/neo-tree.nvim",
-    requires = {
-      "nvim-lua/plenary.nvim",
-    },
+    "nvim-tree/nvim-tree.lua",
     config = function()
-      require("neo-tree").setup({
-        close_if_last_window = true,
-        enable_git_status = false,
-        window = {
-          position = 'right',
-        },
-      })
-    end,
+      require('nvim-tree').setup({})
+    end
   },
   {
     "nvim-telescope/telescope.nvim",
@@ -322,12 +322,18 @@ require("lazy").setup({
   },
   { "dstein64/vim-startuptime" },
   {
-    'akinsho/toggleterm.nvim',
-    version = "*",
+    "NvChad/nvterm",
     config = function()
-      require('toggleterm').setup()
+      require("nvterm").setup()
     end,
   },
+  -- {
+  --   'akinsho/toggleterm.nvim',
+  --   version = "*",
+  --   config = function()
+  --     require('toggleterm').setup()
+  --   end,
+  -- },
   {
   "ggandor/leap.nvim",
   config = function()
@@ -338,19 +344,26 @@ require("lazy").setup({
 
 
 vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format({ async = true }) ]]
+vim.cmd [[autocmd VimEnter * lua require("nvim-tree.api").tree.toggle({ focus = false }) ]]
+
+vim.cmd 'cnoreabbrev dui lua require("dapui").open()'
+
+map('t', '<escape>', '<C-\\><C-n>', { silent = true })
 
 map("n", "<leader>ff", ":Telescope find_files<CR>", { silent = true })
 map("n", "<leader>fl", ":Telescope lsp_document_symbols<CR>", { silent = true })
 map("n", "<leader>fz", ":Telescope current_buffer_fuzzy_find<CR>", { silent = true })
 
-map("n", "<leader>h", ":ToggleTerm direction=horizontal size=20<CR>", { silent = true })
-map("n", "<leader>v", ":ToggleTerm direction=vertical size=60<CR>", { silent = true })
+map("n", "<leader>th", ":lua require('nvterm.terminal').toggle('horizontal')<CR>", { silent = true })
+map("n", "<leader>tnh", ":lua require('nvterm.terminal').new('horizontal')<CR>", { silent = true })
+map("n", "<leader>tv", ":lua require('nvterm.terminal').toggle('vertical')<CR>", { silent = true })
+map("n", "<leader>tnv", ":lua require('nvterm.terminal').new('vertical')<CR>", { silent = true })
 
 map("n", "<leader>du", ":lua require('dapui').toggle()<CR>", { silent = true })
 map("n", "<leader>db", ":DapToggleBreakpoint<CR>", { silent = true })
 map("n", "<leader>dc", ":DapContinue<CR>", { silent = true })
 map("n", "<leader>dt", ":DapTerminate<CR>", { silent = true })
 
-map("n", "<C-b>", ":NeoTreeShowToggle<CR>", { silent = true })
+map("n", "<C-b>", ":NvimTreeToggle<CR>", { silent = true })
 map("n", "<C-s>", ":w<CR>", { silent = true })
 map("i", "<C-s>", "<esc>:w<CR>", { silent = true })
