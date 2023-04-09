@@ -15,13 +15,12 @@ vim.opt.expandtab = true
 vim.opt.hlsearch = true
 vim.opt.relativenumber = true
 vim.opt.number = true
-vim.opt.expandtab = true
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.list = true
 -- vim.opt.listchars:append "eol:¬"
 
-vim.g.mapleader = "\\"
+vim.g.mapleader = ' '
 
 function map(mode, lhs, rhs, opts)
     local options = { noremap = true }
@@ -64,7 +63,46 @@ require("lazy").setup({
   {
     "rcarriga/nvim-dap-ui",
     config = function()
-      require('dapui').setup({})
+      require('dapui').setup({
+        layouts = {
+          {
+            position = "left",
+            size = 40,
+            elements = {
+              {
+                id = "breakpoints",
+                size = 0.10,
+              },
+              {
+                id = "stacks",
+                size = 0.25,
+              },
+              {
+                id = "watches",
+                size = 0.25,
+              },
+              {
+                id = "scopes",
+                size = 0.40,
+              },
+            },
+          },
+          {
+            position = "bottom",
+            size = 15,
+            elements = {
+              -- {
+              --  id = "console",
+              --  size = 0.5,
+              -- },
+              {
+                id = "repl",
+                size = 1,
+              }
+            },
+          },
+        }
+      })
     end
   },
   {
@@ -79,7 +117,37 @@ require("lazy").setup({
           args = { "dap", "-l", "127.0.0.1:63370" },
         },
       }
+      local dap, dapui = require("dap"), require("dapui")
+      dap.listeners.after.event_initialized["dapui_config"] = function()
+        dapui.open()
+        vim.cmd ':NeoTreeClose'
+      end
+      dap.listeners.before.event_terminated["dapui_config"] = function()
+        dapui.close()
+        vim.cmd ':NeoTreeShow'
+      end
+      dap.listeners.before.event_exited["dapui_config"] = function()
+        dapui.close()
+        vim.cmd ':NeoTreeShow'
+      end
+
       vim.cmd 'DapLoadLaunchJSON'
+    end
+  },
+  {
+    "jose-elias-alvarez/null-ls.nvim",
+    config = function()
+      require('null-ls').setup({
+        sources = {
+          require('null-ls').builtins.formatting.goimports,
+        }
+      })
+    end
+  },
+  {
+    "jay-babu/mason-null-ls.nvim",
+    config = function()
+      require("mason-null-ls").setup({})
     end
   },
   {
@@ -142,6 +210,8 @@ require("lazy").setup({
     "nvim-treesitter/nvim-treesitter",
     config = function()
       require("nvim-treesitter.configs").setup({})
+      vim.cmd ":TSUpdate"
+      vim.cmd ":TSEnable highlight"
     end,
   },
   {
@@ -160,6 +230,10 @@ require("lazy").setup({
     config = function()
       require("neo-tree").setup({
         close_if_last_window = true,
+        enable_git_status = false,
+        window = {
+          position = 'right',
+        },
       })
     end,
   },
@@ -184,16 +258,16 @@ require("lazy").setup({
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
         vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
-        vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
-        vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
-        vim.keymap.set('n', '<space>wl', function()
+        vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
+        vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
+        vim.keymap.set('n', '<leader>wl', function()
           print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
         end, bufopts)
-        vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
-        vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)
-        vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
+        vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
+        vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
         vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
-        vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
+        vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format { async = true } end, bufopts)
       end
 
       local lsp = require("lspconfig")
@@ -212,9 +286,16 @@ require("lazy").setup({
     "ms-jpq/coq_nvim",
     config = function()
       vim.cmd("COQnow")
+      _G.coq_settings = {
+        clients = {
+          tabnine = {
+            enabled = true
+          }
+        }
+      }
     end,
   },
-  { "ms-jpq/coq.artifacts" },
+   -- { "ms-jpq/coq.artifacts" },
   {
     "windwp/nvim-autopairs",
     config = function()
@@ -240,14 +321,36 @@ require("lazy").setup({
     end,
   },
   { "dstein64/vim-startuptime" },
+  {
+    'akinsho/toggleterm.nvim',
+    version = "*",
+    config = function()
+      require('toggleterm').setup()
+    end,
+  },
+  {
+  "ggandor/leap.nvim",
+  config = function()
+    require('leap').add_default_mappings()
+  end
+  }
 })
 
 
 vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format({ async = true }) ]]
 
-map("n", "<space>", ":WhichKey<CR>", { silent = true })
-map("n", "<C-p>", ":Telescope find_files<CR>", { silent = true })
+map("n", "<leader>ff", ":Telescope find_files<CR>", { silent = true })
+map("n", "<leader>fl", ":Telescope lsp_document_symbols<CR>", { silent = true })
+map("n", "<leader>fz", ":Telescope current_buffer_fuzzy_find<CR>", { silent = true })
+
+map("n", "<leader>h", ":ToggleTerm direction=horizontal size=20<CR>", { silent = true })
+map("n", "<leader>v", ":ToggleTerm direction=vertical size=60<CR>", { silent = true })
+
+map("n", "<leader>du", ":lua require('dapui').toggle()<CR>", { silent = true })
+map("n", "<leader>db", ":DapToggleBreakpoint<CR>", { silent = true })
+map("n", "<leader>dc", ":DapContinue<CR>", { silent = true })
+map("n", "<leader>dt", ":DapTerminate<CR>", { silent = true })
+
 map("n", "<C-b>", ":NeoTreeShowToggle<CR>", { silent = true })
-map("n", "<C-B>", ":DapToggleBreakpoint<CR>", { silent = true })
 map("n", "<C-s>", ":w<CR>", { silent = true })
 map("i", "<C-s>", "<esc>:w<CR>", { silent = true })
