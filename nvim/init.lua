@@ -29,6 +29,7 @@ require("lazy").setup({
       })
     end,
   },
+
   {
     "williamboman/mason.nvim",
     config = function()
@@ -91,8 +92,6 @@ require("lazy").setup({
       })
     end
   },
-
-
 
   {
     "jay-babu/mason-nvim-dap.nvim",
@@ -164,7 +163,11 @@ require("lazy").setup({
   {
     "nvim-lualine/lualine.nvim",
     config = function()
-      require("lualine").setup()
+      require("lualine").setup({
+        options = {
+          theme = 'sonokai'
+        },
+      })
     end,
   },
   {
@@ -280,20 +283,41 @@ require("lazy").setup({
     end
   },
 
+  { "rafamadriz/friendly-snippets" },
   {
-    "ms-jpq/coq_nvim",
+    "L3MON4D3/LuaSnip",
     config = function()
-      vim.cmd("COQnow")
-      _G.coq_settings = {
-        clients = {
-          tabnine = {
-            enabled = true
-          }
-        }
-      }
+      require("luasnip.loaders.from_vscode").lazy_load()
     end,
   },
-   -- { "ms-jpq/coq.artifacts" },
+  { "saadparwaiz1/cmp_luasnip" },
+  { "hrsh7th/cmp-nvim-lsp" },
+  {
+    "hrsh7th/nvim-cmp",
+    config = function()
+      local cmp = require('cmp')
+
+      cmp.setup({
+        sources = cmp.config.sources({
+          { name = 'nvim_lsp' },
+          { name = 'buffer' },
+          { name = 'luasnip', option = { show_autosnippets = false } },
+        }),
+
+        mapping = cmp.mapping.preset.insert({
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ['<C-Space>'] = cmp.mapping.complete(),
+        }),
+
+        snippet = {
+          expand = function(args)
+            require('luasnip').lsp_expand(args.body)
+          end,
+        },
+      })
+    end
+  },
+
   {
     "windwp/nvim-autopairs",
     config = function()
@@ -306,16 +330,11 @@ require("lazy").setup({
       require("gitsigns").setup()
     end,
   },
+
   {
-    "catppuccin/nvim",
+    "folke/tokyonight.nvim",
     config = function()
-      require("catppuccin").setup({
-        indent_blankline = {
-          enabled = true,
-          colored_indent_levels = true,
-        },
-      })
-      vim.cmd.colorscheme "catppuccin-mocha"
+      vim.cmd.colorscheme "tokyonight-night"
     end,
   },
 
