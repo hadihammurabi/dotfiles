@@ -1,3 +1,6 @@
+require('options')
+require('keymaps')
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -10,28 +13,6 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
-
-vim.opt.expandtab = true
-vim.opt.hlsearch = true
-vim.opt.relativenumber = true
-vim.opt.number = true
-vim.opt.tabstop = 2
-vim.opt.shiftwidth = 2
-vim.opt.list = true
--- vim.opt.listchars:append "eol:¬"
-vim.opt.termguicolors = true
-
-vim.g.mapleader = ' '
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
-
-function map(mode, lhs, rhs, opts)
-    local options = { noremap = true }
-    if opts then
-        options = vim.tbl_extend("force", options, opts)
-    end
-    vim.api.nvim_set_keymap(mode, lhs, rhs, options)
-end
 
 require("lazy").setup({
   {
@@ -62,7 +43,9 @@ require("lazy").setup({
       })
     end,
   },
+
   { "mfussenegger/nvim-dap" },
+
   {
     "rcarriga/nvim-dap-ui",
     config = function()
@@ -72,22 +55,22 @@ require("lazy").setup({
             position = "left",
             size = 40,
             elements = {
-              {
-                id = "breakpoints",
-                size = 0.10,
-              },
-              {
-                id = "stacks",
-                size = 0.25,
-              },
-              {
-                id = "watches",
-                size = 0.25,
-              },
-              {
-                id = "scopes",
-                size = 0.40,
-              },
+              -- {
+              --   id = "breakpoints",
+              --   size = 0.10,
+              -- },
+              -- {
+              --   id = "stacks",
+              --   size = 0.25,
+              -- },
+              -- {
+              --   id = "watches",
+              --   size = 0.25,
+              -- },
+              -- {
+              --   id = "scopes",
+              --   size = 0.40,
+              -- },
             },
           },
           {
@@ -108,6 +91,9 @@ require("lazy").setup({
       })
     end
   },
+
+
+
   {
     "jay-babu/mason-nvim-dap.nvim",
     config = function()
@@ -210,7 +196,7 @@ require("lazy").setup({
     end,
   },
   {
-    "nvim-tree/nvim-web-devicons",
+    "nvim-tree/nvim-web-devicons", 
     config = function()
       require("nvim-web-devicons").setup()
     end,
@@ -234,7 +220,11 @@ require("lazy").setup({
   {
     "nvim-tree/nvim-tree.lua",
     config = function()
-      require('nvim-tree').setup({})
+      require('nvim-tree').setup({
+        view = {
+          side = "right",
+        },
+      })
     end
   },
   {
@@ -282,6 +272,14 @@ require("lazy").setup({
       })
     end,
   },
+
+  {
+    "numToStr/Comment.nvim",
+    config = function()
+      require('Comment').setup()
+    end
+  },
+
   {
     "ms-jpq/coq_nvim",
     config = function()
@@ -320,13 +318,20 @@ require("lazy").setup({
       vim.cmd.colorscheme "catppuccin-mocha"
     end,
   },
+
   { "dstein64/vim-startuptime" },
+
   {
     "NvChad/nvterm",
     config = function()
-      require("nvterm").setup()
+      require("nvterm").setup({
+        terminals = {
+          shell = '/usr/local/bin/fish',
+        },
+      })
     end,
   },
+
   -- {
   --   'akinsho/toggleterm.nvim',
   --   version = "*",
@@ -344,26 +349,3 @@ require("lazy").setup({
 
 
 vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format({ async = true }) ]]
-vim.cmd [[autocmd VimEnter * lua require("nvim-tree.api").tree.toggle({ focus = false }) ]]
-
-vim.cmd 'cnoreabbrev dui lua require("dapui").open()'
-
-map('t', '<escape>', '<C-\\><C-n>', { silent = true })
-
-map("n", "<leader>ff", ":Telescope find_files<CR>", { silent = true })
-map("n", "<leader>fl", ":Telescope lsp_document_symbols<CR>", { silent = true })
-map("n", "<leader>fz", ":Telescope current_buffer_fuzzy_find<CR>", { silent = true })
-
-map("n", "<leader>th", ":lua require('nvterm.terminal').toggle('horizontal')<CR>", { silent = true })
-map("n", "<leader>tnh", ":lua require('nvterm.terminal').new('horizontal')<CR>", { silent = true })
-map("n", "<leader>tv", ":lua require('nvterm.terminal').toggle('vertical')<CR>", { silent = true })
-map("n", "<leader>tnv", ":lua require('nvterm.terminal').new('vertical')<CR>", { silent = true })
-
-map("n", "<leader>du", ":lua require('dapui').toggle()<CR>", { silent = true })
-map("n", "<leader>db", ":DapToggleBreakpoint<CR>", { silent = true })
-map("n", "<leader>dc", ":DapContinue<CR>", { silent = true })
-map("n", "<leader>dt", ":DapTerminate<CR>", { silent = true })
-
-map("n", "<C-b>", ":NvimTreeToggle<CR>", { silent = true })
-map("n", "<C-s>", ":w<CR>", { silent = true })
-map("i", "<C-s>", "<esc>:w<CR>", { silent = true })
