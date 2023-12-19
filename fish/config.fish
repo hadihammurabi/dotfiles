@@ -39,6 +39,7 @@ set -gx PATH $HOME/go/bin $PATH
 
 # nodejs
 set -gx PATH "$HOME/.nvm/versions/node/v18.17.0/bin" $PATH
+# set -gx PATH "$HOME/.nvm/versions/node/v14.21.3/bin" $PATH
 
 # pnpm
 set -gx PNPM_HOME "/Users/hammurabi/Library/pnpm"
@@ -59,6 +60,15 @@ alias ls="exa --icons -s type"
 alias du=dust
 alias cd=z
 alias lgit=lazygit
+alias todo=todo.sh
+
+function gpg-agent-restart
+  /usr/local/Cellar/gnupg@2.2/2.2.41/bin/gpgconf --kill gpg-agent
+  /usr/local/Cellar/gnupg@2.2/2.2.41/bin/gpg-agent --daemon
+end
+
+# opam configuration
+source /Users/hammurabi/.opam/opam-init/init.fish > /dev/null 2> /dev/null; or true
 
 # Fish syntax highlighting
 set -g fish_color_autosuggestion '555'  'brblack'
@@ -82,4 +92,10 @@ set -g fish_color_search_match 'bryellow'  '--background=brblack'
 set -g fish_color_selection 'white'  '--bold'  '--background=brblack'
 set -g fish_color_user brgreen
 set -g fish_color_valid_path --underline
+
+if not set -q TMUX
+    set -g TMUX tmux new-session -d -s base
+    eval $TMUX
+    tmux attach-session -d -t base
+end
 
